@@ -2,6 +2,7 @@
 
 $poshGitRoot = Get-ChildItem -Path $gitHubPath -Filter "Posh*"
 $portableGitRoot = Get-ChildItem -Path $gitHubPath -Filter "PortableGit*"
+$gitPad = (Join-Path $env:APPDATA "GitPad")
 
 $rubyFolder = Get-ChildItem -Path "$env:SystemDrive\" -Filter "Ruby*" | Sort-Object -Property "Name" -Descending | Select-Object -First 1
 $pythonFolder = Get-ChildItem -Path "$env:SystemDrive\" -Filter "Python*" | Sort-Object -Property "Name" -Descending | Select-Object -First 1
@@ -19,6 +20,7 @@ param($path)
 Set-Path (Join-Path ($rubyFolder.FullName) "bin")
 Set-Path $pythonFolder.FullName
 Set-Path (Join-Path ($portableGitRoot.FullName) "bin")
+Set-Path $gitPad
 
 Push-Location $poshGitRoot.FullName
 
