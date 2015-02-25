@@ -88,7 +88,6 @@ function global:prompt {
     $host.ui.RawUI.WindowTitle = ("{0} {1}P> {2}" -f $smileyTitle,$adminTitle,(get-location))
 
     Write-Host ("[{0} {1}{2}]`n{3}{4}" -f ([DateTime]::Now).ToLongTimeString(),(pwd),$stack,$smileyPrompt,$arrowChar) -nonewline
-    Write-Host($pwd.ProviderPath) -nonewline
 
     Write-VcsStatus
 
