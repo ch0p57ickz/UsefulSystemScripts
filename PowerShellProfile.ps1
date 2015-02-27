@@ -44,6 +44,21 @@ Import-Module .\posh-git
 # use this instead (see about_Modules for more information):
 # Import-Module posh-git
 
+function Start-Start
+{
+    & "start" .    
+}
+
+Set-Alias -Name "start." -Value "Start-Start"
+
+function Set-MuteBell {
+    $global:MuteBell = $true
+}
+
+function Set-UnMuteBell {
+    $Global:MuteBell = $null
+}
+
 # Set up a simple prompt, adding the git prompt parts inside git repos
 function global:prompt {
     #Puts a smiley or sad face depending on the success of the last command
@@ -91,8 +106,14 @@ function global:prompt {
 
     Write-VcsStatus
 
+    $bell = "`a"
+    if($global:MuteBell)
+    {
+        $bell = $null
+    }
+
     $global:LASTEXITCODE = $realLASTEXITCODE
-    return ">`a "
+    return ">$bell "
 }
 
 #region 'migrated' from posh git
