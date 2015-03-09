@@ -2,6 +2,10 @@
 function Set-Path
 {
 param($path)
+    if (-not (Test-Path $path))
+    {
+        return
+    }
 
     if(($env:Path -split ';') -inotcontains $path)
     {
@@ -31,8 +35,15 @@ $rubyFolder = Get-ChildItem -Path "$env:SystemDrive\" -Filter "Ruby2*" | Sort-Ob
 $pythonFolder = Get-ChildItem -Path "$env:SystemDrive\" -Filter "Python*" | Sort-Object -Property "Name" -Descending | Select-Object -First 1
 #endregion
 
-Set-Path (Join-Path ($rubyFolder.FullName) "bin")
-Set-Path $pythonFolder.FullName
+if ($rubyFolder)
+{
+    Set-Path (Join-Path ($rubyFolder.FullName) "bin")
+}
+
+if ($pythonFolder)
+{
+    Set-Path $pythonFolder.FullName
+}
 Set-Path (Join-Path ($portableGitRoot.FullName) "bin")
 Set-Path $gitPad
 Set-Path $github
