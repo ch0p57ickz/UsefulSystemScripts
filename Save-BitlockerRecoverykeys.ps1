@@ -1,15 +1,4 @@
-﻿param(
-    [Parameter()]
-    [String[]]
-    $Computers = (
-        "japrom-alkari",
-        "japrom-beast"
-        )
-)
-
-$code = {
-
-$possiblePaths = @("C:\Users\japrom\SkyDrive Pro\BitLockerKeys", "C:\Users\japrom\OneDrive for Business\BitLockerKeys")
+﻿$possiblePaths = @("C:\Users\japrom\SkyDrive Pro\BitLockerKeys", "C:\Users\japrom\OneDrive for Business\BitLockerKeys")
 
 $DestinationRoot = $null
 foreach($path in $possiblePaths)
@@ -31,8 +20,3 @@ Import-Module Bitlocker -erroraction SilentlyContinue
         # echo $filePath
         Set-Content -Path $filePath -Value $_.RecoveryPassword
     }
-}
-
-Invoke-Command -ComputerName $Computers -ScriptBlock $code #-Authentication Credssp -Credential (Get-Credential)
-# Must be admin to pssession your own pc
-#$code.Invoke()
