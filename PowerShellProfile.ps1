@@ -51,11 +51,16 @@ Set-Path $github
 Push-Location $poshGitRoot.FullName
 
 # Load posh-git module from current directory
-#Import-Module .\posh-git
-
-# If module is installed in a default location ($env:PSModulePath),
-# use this instead (see about_Modules for more information):
-Import-Module posh-git
+if (Get-Module -Name Posh-Git)
+{
+  Import-Module posh-git
+}
+else
+{
+  # If module is installed in a default location ($env:PSModulePath),
+  # use this instead (see about_Modules for more information):
+  Import-Module .\posh-git
+}
 
 function Start-Start
 {
