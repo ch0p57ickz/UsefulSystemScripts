@@ -51,15 +51,15 @@ Set-Path $github
 Push-Location $poshGitRoot.FullName
 
 # Load posh-git module from current directory
-Import-Module .\posh-git
+#Import-Module .\posh-git
 
 # If module is installed in a default location ($env:PSModulePath),
 # use this instead (see about_Modules for more information):
-# Import-Module posh-git
+Import-Module posh-git
 
 function Start-Start
 {
-    & "start" .    
+    & "start" .
 }
 
 Set-Alias -Name "start." -Value "Start-Start"
@@ -98,7 +98,7 @@ function global:prompt {
             $stack = " "
         }
         $stack += "+"
-    }    
+    }
 
     # Is admin?
     $arrowChar = ""
@@ -111,7 +111,7 @@ function global:prompt {
 
     # Reset color, which can be messed up by Enable-GitColors
     $Host.UI.RawUI.ForegroundColor = $GitPromptSettings.DefaultForegroundColor
-    
+
     #put it all together
     $host.ui.RawUI.WindowTitle = ("{0} {1}P> {2}" -f $smileyTitle,$adminTitle,(get-location))
 
