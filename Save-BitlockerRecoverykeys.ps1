@@ -24,9 +24,9 @@ foreach($path in $possiblePaths)
 Import-Module Bitlocker -erroraction SilentlyContinue
 (Get-BitLockerVolume).KeyProtector | `
     Where-Object { $_.KeyProtectorType -eq "RecoveryPassword" } | `
-    foreach { 
+    foreach {
         $keyProtector = $_.KeyProtectorId.Trim("{", "}")
-        echo ("{0} {1} ({2})" -f $keyProtector,$_.RecoveryPassword,$env:COMPUTERNAME) 
+        echo ("{0} {1} ({2})" -f $keyProtector,$_.RecoveryPassword,$env:COMPUTERNAME)
         $filePath = Join-Path $DestinationRoot ("{0} ({1}).txt" -f $keyProtector,$env:COMPUTERNAME)
         # echo $filePath
         Set-Content -Path $filePath -Value $_.RecoveryPassword
