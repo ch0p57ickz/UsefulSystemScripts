@@ -7,7 +7,7 @@ $gitPad = (Join-Path $env:APPDATA "GitPad")
 $rubyFolder = Get-ChildItem -Path "$env:SystemDrive\" -Filter "Ruby*" | Sort-Object -Property "Name" -Descending | Select-Object -First 1
 $pythonFolder = Get-ChildItem -Path "$env:SystemDrive\" -Filter "Python*" | Sort-Object -Property "Name" -Descending | Select-Object -First 1
 
-﻿#region Useful Functions
+#region Useful Functions
 function Set-Path
 {
 param($path)
