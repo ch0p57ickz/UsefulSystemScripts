@@ -50,7 +50,7 @@ Set-Path $github
 
 Push-Location $poshGitRoot.FullName
 
-if (Get-Module -Name Posh-Git)
+if (Get-Module -ListAvailable -Name Posh-Git)
 {
   # If module is installed in a default location ($env:PSModulePath),
   # use this instead (see about_Modules for more information):
