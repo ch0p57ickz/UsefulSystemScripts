@@ -144,7 +144,7 @@ function global:prompt {
 if(Test-Path function:\Enable-Gitcolors)
 {
     #region 'migrated' from posh git
-    Enable-GitColors
+    # Enable-GitColors obsolete
 
     Start-SshAgent -Quiet
     #endregion

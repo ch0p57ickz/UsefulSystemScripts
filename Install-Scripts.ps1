@@ -75,6 +75,16 @@ function InstallChocolatey
     iex ((new-object net.webclient).DownloadString('https://chocolatey.org/install.ps1'))
 }
 
+function IsPsGetInstalled
+{
+    Test-Path function:\\Install-Module
+}
+
+function InstallPsGet
+{
+    (new-object Net.WebClient).DownloadString("http://psget.net/GetPsGet.ps1") | iex
+}
+
 function IsPoshGitInstalled
 {
     $poshgit = Get-Module -ListAvailable posh-git
@@ -95,12 +105,19 @@ function IsPoshGitInstalled
 
 function InstallPoshGit
 {
-    choco install poshgit
+    # Installed some weird C:\tools\poshgit\dahlbyk-posh-git-2490619
+    #choco install poshgit
+    Install-Module posh-git
 }
 
 if(-not (IsChocoInstalled))
 {
     InstallChocolatey
+}
+
+if(-not (IsPsGetInstalled))
+{
+    InstallPsGet
 }
 
 if(-not (IsPoshGitInstalled))
