@@ -1,4 +1,4 @@
-#region Useful Functions
+﻿#region Useful Functions
 function Set-Path
 {
 param($path)
@@ -58,8 +58,15 @@ if (Get-Module -ListAvailable -Name Posh-Git)
 }
 else
 {
-  # Load posh-git module from current directory
-  Import-Module .\posh-git
+  if (-not (Test-Path ".\posh-git"))
+  {
+    # Write-Error "Posh Git is not installed and not found in GitHub folder"
+  }
+  else
+  {
+    # Load posh-git module from current directory
+    Import-Module .\posh-git
+  }
 }
 
 function Start-Start
@@ -134,10 +141,13 @@ function global:prompt {
     return ">$bell "
 }
 
-#region 'migrated' from posh git
-Enable-GitColors
+if(Test-Path function:\Enable-Gitcolors)
+{
+    #region 'migrated' from posh git
+    Enable-GitColors
+
+    Start-SshAgent -Quiet
+    #endregion
+}
 
 Pop-Location
-
-Start-SshAgent -Quiet
-#endregion
