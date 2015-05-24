@@ -1,4 +1,4 @@
-﻿param(
+param(
     [Parameter()]
     [String[]]
     $Computers = (
@@ -31,8 +31,3 @@ Import-Module Bitlocker -erroraction SilentlyContinue
         # echo $filePath
         Set-Content -Path $filePath -Value $_.RecoveryPassword
     }
-}
-
-Invoke-Command -ComputerName $Computers -ScriptBlock $code #-Authentication Credssp -Credential (Get-Credential)
-# Must be admin to pssession your own pc
-#$code.Invoke()
