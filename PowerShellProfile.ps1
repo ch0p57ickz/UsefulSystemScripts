@@ -2,6 +2,10 @@
 function Set-Path
 {
 param($path)
+    if (-not (Test-Path $path))
+    {
+        return
+    }
 
     if(($env:Path -split ';') -inotcontains $path)
     {
@@ -31,24 +35,43 @@ $rubyFolder = Get-ChildItem -Path "$env:SystemDrive\" -Filter "Ruby2*" | Sort-Ob
 $pythonFolder = Get-ChildItem -Path "$env:SystemDrive\" -Filter "Python*" | Sort-Object -Property "Name" -Descending | Select-Object -First 1
 #endregion
 
-Set-Path (Join-Path ($rubyFolder.FullName) "bin")
-Set-Path $pythonFolder.FullName
+if ($rubyFolder)
+{
+    Set-Path (Join-Path ($rubyFolder.FullName) "bin")
+}
+
+if ($pythonFolder)
+{
+    Set-Path $pythonFolder.FullName
+}
 Set-Path (Join-Path ($portableGitRoot.FullName) "bin")
 Set-Path $gitPad
 Set-Path $github
 
 Push-Location $poshGitRoot.FullName
 
-# Load posh-git module from current directory
-Import-Module .\posh-git
-
-# If module is installed in a default location ($env:PSModulePath),
-# use this instead (see about_Modules for more information):
-# Import-Module posh-git
+if (Get-Module -ListAvailable -Name Posh-Git)
+{
+  # If module is installed in a default location ($env:PSModulePath),
+  # use this instead (see about_Modules for more information):
+  Import-Module posh-git
+}
+else
+{
+  if (-not (Test-Path ".\posh-git"))
+  {
+    # Write-Error "Posh Git is not installed and not found in GitHub folder"
+  }
+  else
+  {
+    # Load posh-git module from current directory
+    Import-Module .\posh-git
+  }
+}
 
 function Start-Start
 {
-    & "start" .    
+    & "start" .
 }
 
 Set-Alias -Name "start." -Value "Start-Start"
@@ -87,7 +110,7 @@ function global:prompt {
             $stack = " "
         }
         $stack += "+"
-    }    
+    }
 
     # Is admin?
     $arrowChar = ""
@@ -100,7 +123,7 @@ function global:prompt {
 
     # Reset color, which can be messed up by Enable-GitColors
     $Host.UI.RawUI.ForegroundColor = $GitPromptSettings.DefaultForegroundColor
-    
+
     #put it all together
     $host.ui.RawUI.WindowTitle = ("{0} {1}P> {2}" -f $smileyTitle,$adminTitle,(get-location))
 
@@ -118,10 +141,13 @@ function global:prompt {
     return ">$bell "
 }
 
-#region 'migrated' from posh git
-Enable-GitColors
+if(Test-Path function:\Enable-Gitcolors)
+{
+    #region 'migrated' from posh git
+    # Enable-GitColors obsolete
+
+    Start-SshAgent -Quiet
+    #endregion
+}
 
 Pop-Location
-
-Start-SshAgent -Quiet
-#endregion
