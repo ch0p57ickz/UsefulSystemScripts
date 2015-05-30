@@ -85,6 +85,28 @@ function InstallPsGet
     (new-object Net.WebClient).DownloadString("http://psget.net/GetPsGet.ps1") | iex
 }
 
+function InstallWithPSGet
+{
+param(
+    $ToInstall = @("posh-git")
+)
+    foreach($thing in $ToInstall)
+    {
+        Install-Module $thing
+    }
+}
+
+function InstallWithChoco
+{
+param(
+    $ToInstall = @("git.install")
+)
+    foreach($thing in $ToInstall)
+    {
+        choco install $thing
+    }
+}
+
 function IsPoshGitInstalled
 {
     $poshgit = Get-Module -ListAvailable posh-git
@@ -103,13 +125,6 @@ function IsPoshGitInstalled
     }
 }
 
-function InstallPoshGit
-{
-    # Installed some weird C:\tools\poshgit\dahlbyk-posh-git-2490619
-    #choco install poshgit
-    Install-Module posh-git
-}
-
 if(-not (IsChocoInstalled))
 {
     InstallChocolatey
@@ -120,10 +135,8 @@ if(-not (IsPsGetInstalled))
     InstallPsGet
 }
 
-if(-not (IsPoshGitInstalled))
-{
-    InstallPoshGit
-}
+InstallWithChoco
+InstallWithPSGet
 
 WarnIfRunningInISE
 ResolveProfileFile
