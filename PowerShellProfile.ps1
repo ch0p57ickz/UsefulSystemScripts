@@ -2,7 +2,7 @@
 function Set-Path
 {
 param($path)
-    if (-not (Test-Path $path))
+    if ((-not $path) -or (-not (Test-Path $path)))
     {
         return
     }
@@ -33,6 +33,7 @@ $github = Split-Path (Get-ChildItem -Path $env:LOCALAPPDATA -Recurse -Filter "gi
 
 $rubyFolder = Get-ChildItem -Path "$env:SystemDrive\" -Filter "Ruby2*" | Sort-Object -Property "Name" -Descending | Select-Object -First 1
 $pythonFolder = Get-ChildItem -Path "$env:SystemDrive\" -Filter "Python*" | Sort-Object -Property "Name" -Descending | Select-Object -First 1
+
 #endregion
 
 if ($rubyFolder)
@@ -47,6 +48,7 @@ if ($pythonFolder)
 Set-Path (Join-Path ($portableGitRoot.FullName) "bin")
 Set-Path $gitPad
 Set-Path $github
+Set-Path "$env:LOCALAPPDATA\Android\sdk\platform-tools"
 
 Push-Location $poshGitRoot.FullName
 
