@@ -46,6 +46,7 @@ if ($pythonFolder)
     Set-Path $pythonFolder.FullName
 }
 Set-Path (Join-Path ($portableGitRoot.FullName) "bin")
+Set-Path (Join-Path ($portableGitRoot.FullName) "usr\bin")
 Set-Path (Join-Path ($portableGitRoot.FullName) "cmd")
 Set-Path $gitPad
 Set-Path $github
