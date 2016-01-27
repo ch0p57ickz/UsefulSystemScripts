@@ -2,7 +2,7 @@
 function Set-Path
 {
 param($path)
-    if (-not (Test-Path $path))
+    if ((-not $path) -or (-not (Test-Path $path)))
     {
         return
     }
@@ -34,6 +34,7 @@ $gitForWindows = Join-Path $env:ProgramFiles "Git\Bin"
 
 $rubyFolder = Get-ChildItem -Path "$env:SystemDrive\" -Filter "Ruby2*" | Sort-Object -Property "Name" -Descending | Select-Object -First 1
 $pythonFolder = Get-ChildItem -Path "$env:SystemDrive\" -Filter "Python*" | Sort-Object -Property "Name" -Descending | Select-Object -First 1
+
 #endregion
 
 if ($rubyFolder)
@@ -46,6 +47,7 @@ if ($pythonFolder)
     Set-Path $pythonFolder.FullName
 }
 
+
 if (Test-Path $gitForWindows)
 {
     Set-Path $gitForWindows
@@ -53,9 +55,14 @@ if (Test-Path $gitForWindows)
 else
 {
     Set-Path (Join-Path ($portableGitRoot.FullName) "bin")
+    Set-Path (Join-Path ($portableGitRoot.FullName) "usr\bin")
+    Set-Path (Join-Path ($portableGitRoot.FullName) "cmd")
 }
+
 Set-Path $gitPad
 Set-Path $github
+Set-Path "$env:LOCALAPPDATA\Android\sdk\platform-tools"
+Set-Path "C:\Program Files\MongoDB\Server\3.0\bin"
 
 Push-Location $poshGitRoot.FullName
 
@@ -158,5 +165,14 @@ if(Test-Path function:\Enable-Gitcolors)
     Start-SshAgent -Quiet
     #endregion
 }
+
+#region Import Modules from folder
+Push-Location $PSScriptRoot
+
+Import-Module ".\NodeJsFunctions.psm1"
+
+Pop-Location
+
+#endregion
 
 Pop-Location
