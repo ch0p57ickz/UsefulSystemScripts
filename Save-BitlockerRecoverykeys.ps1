@@ -7,8 +7,6 @@ param(
         )
 )
 
-$code = {
-
 $possiblePaths = @("C:\Users\japrom\SkyDrive Pro\BitLockerKeys", "C:\Users\japrom\OneDrive for Business\BitLockerKeys")
 
 $DestinationRoot = $null

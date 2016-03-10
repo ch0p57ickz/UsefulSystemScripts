@@ -21,7 +21,51 @@ function Is-Admin
     return $prp.IsInRole($adm)
 }
 
+function ConvertPSObjectToHashtable
+{
+    param (
+        [Parameter(ValueFromPipeline)]
+        $InputObject
+    )
+
+    process
+    {
+        if ($null -eq $InputObject) { return $null }
+
+        if ($InputObject -is [System.Collections.IEnumerable] -and $InputObject -isnot [string])
+        {
+            $collection = @(
+                foreach ($object in $InputObject) { ConvertPSObjectToHashtable $object }
+            )
+
+            Write-Output -NoEnumerate $collection
+        }
+        elseif ($InputObject -is [psobject])
+        {
+            $hash = @{}
+
+            foreach ($property in $InputObject.PSObject.Properties)
+            {
+                $hash[$property.Name] = ConvertPSObjectToHashtable $property.Value
+            }
+
+            $hash
+        }
+        else
+        {
+            $InputObject
+        }
+    }
+}
+
 #endregion
+
+$persistentStore = @{}
+$persistentStorePath = Join-Path $env:USERPROFILE "powerShellPersistentStore"
+if (Test-Path $persistentStorePath)
+{
+    $persistentStore = (Get-Content $persistentStorePath -raw) | ConvertFrom-Json | ConvertPSObjectToHashtable
+}
 
 #region script local variables
 $gitHubPath = Join-Path $env:LOCALAPPDATA "GitHub"
@@ -47,7 +91,6 @@ if ($pythonFolder)
     Set-Path $pythonFolder.FullName
 }
 
-
 if (Test-Path $gitForWindows)
 {
     Set-Path $gitForWindows
@@ -66,24 +109,30 @@ Set-Path "C:\Program Files\MongoDB\Server\3.0\bin"
 
 Push-Location $poshGitRoot.FullName
 
+
 if (Get-Module -ListAvailable -Name Posh-Git)
 {
-  # If module is installed in a default location ($env:PSModulePath),
-  # use this instead (see about_Modules for more information):
-  Import-Module posh-git
+    # If module is installed in a default location ($env:PSModulePath),
+    # use this instead (see about_Modules for more information):
+    Import-Module posh-git
 }
 else
 {
-  if (-not (Test-Path ".\posh-git"))
-  {
-    # Write-Error "Posh Git is not installed and not found in GitHub folder"
-  }
-  else
-  {
-    # Load posh-git module from current directory
-    Import-Module .\posh-git
-  }
+    if (-not (Test-Path ".\posh-git"))
+    {
+        Write-Error "Posh Git is not installed and not found in GitHub folder"
+        if (-not (Test-Path $env:PSModulePath))
+        {
+            Write-Error "$($env:PSModulePath) does not exist. Did offline files stop working again?"
+        }
+    }
+    else
+    {
+        # Load posh-git module from current directory
+        Import-Module .\posh-git
+    }
 }
+
 
 function Start-Start
 {
@@ -137,15 +186,21 @@ function global:prompt {
         $adminTitle = "Administrator "
     }
 
-    # Reset color, which can be messed up by Enable-GitColors
-    $Host.UI.RawUI.ForegroundColor = $GitPromptSettings.DefaultForegroundColor
+    if ($GitPromptSettings)
+    {
+        # Reset color, which can be messed up by Enable-GitColors
+        $Host.UI.RawUI.ForegroundColor = $GitPromptSettings.DefaultForegroundColor
+    }
 
     #put it all together
     $host.ui.RawUI.WindowTitle = ("{0} {1}P> {2}" -f $smileyTitle,$adminTitle,(get-location))
 
     Write-Host ("[{0} {1}{2}]`n{3}{4}" -f ([DateTime]::Now).ToLongTimeString(),(pwd),$stack,$smileyPrompt,$arrowChar) -nonewline
 
-    Write-VcsStatus
+    if (Test-Path function:\Write-VcsStatus)
+    {
+        Write-VcsStatus
+    }
 
     $bell = "`a"
     if($global:MuteBell)
@@ -176,3 +231,5 @@ Pop-Location
 #endregion
 
 Pop-Location
+
+$persistentStore | ConvertTo-Json | Out-File $persistentStorePath
