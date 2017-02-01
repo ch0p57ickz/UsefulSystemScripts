@@ -217,7 +217,7 @@ if(Test-Path function:\Enable-Gitcolors)
     #region 'migrated' from posh git
     # Enable-GitColors obsolete
 
-    Start-SshAgent -Quiet
+    #Start-SshAgent -Quiet
     #endregion
 }
 
