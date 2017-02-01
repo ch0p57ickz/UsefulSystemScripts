@@ -107,8 +107,11 @@ Set-Path $github
 Set-Path "$env:LOCALAPPDATA\Android\sdk\platform-tools"
 Set-Path "C:\Program Files\MongoDB\Server\3.0\bin"
 
-Push-Location $poshGitRoot.FullName
+$env:PSModulePath -split ';' | where {-not (Test-Path $_) } | foreach {
+    Write-Warning "PSModulePath `"$_`" does not exist"
+}
 
+Push-Location $poshGitRoot.FullName
 
 if (Get-Module -ListAvailable -Name Posh-Git)
 {
@@ -118,18 +121,14 @@ if (Get-Module -ListAvailable -Name Posh-Git)
 }
 else
 {
-    if (-not (Test-Path ".\posh-git"))
+    if (-not (Test-Path ".\posh-git.psm1"))
     {
         Write-Error "Posh Git is not installed and not found in GitHub folder"
-        if (-not (Test-Path $env:PSModulePath))
-        {
-            Write-Error "$($env:PSModulePath) does not exist. Did offline files stop working again?"
-        }
     }
     else
     {
         # Load posh-git module from current directory
-        Import-Module .\posh-git
+        Import-Module .\posh-git.psm1
     }
 }
 

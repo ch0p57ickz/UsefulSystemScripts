@@ -7,7 +7,7 @@ param(
         )
 )
 
-$possiblePaths = @("C:\Users\japrom\SkyDrive Pro\BitLockerKeys", "C:\Users\japrom\OneDrive for Business\BitLockerKeys")
+$possiblePaths = @("C:\Users\japrom\SkyDrive Pro\BitLockerKeys", "C:\Users\japrom\OneDrive for Business\BitLockerKeys", "C:\Users\japrom\OneDrive - Microsoft\BitLockerKeys")
 
 $DestinationRoot = $null
 foreach($path in $possiblePaths)
